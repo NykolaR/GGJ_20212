@@ -1,7 +1,8 @@
-[gd_resource type="ShaderMaterial" load_steps=5 format=2]
+[gd_resource type="ShaderMaterial" load_steps=6 format=2]
 
 [ext_resource path="res://Assets/Visual/Shaders/Jiggle.shader" type="Shader" id=1]
 [ext_resource path="res://Assets/Visual/rgbnoise.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Visual/Shaders/T_Palette.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
 colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
@@ -15,5 +16,8 @@ shader_param/max_distance = 4.0
 shader_param/intensity = 0.0
 shader_param/time_scale = 1.0
 shader_param/possess_position = Vector3( 0, 0, 0 )
+shader_param/distance_fade_min = 0.0
+shader_param/distance_fade_max = 0.5
 shader_param/noise = ExtResource( 2 )
 shader_param/distance_curve = SubResource( 2 )
+shader_param/albedo = ExtResource( 3 )
