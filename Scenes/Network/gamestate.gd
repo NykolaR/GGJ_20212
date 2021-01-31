@@ -13,6 +13,8 @@ var peer = null
 # Name for my player.
 var player_name = "The Warrior"
 
+var playing : bool = false
+
 # Names for remote players in id:name format.
 var players = {}
 var players_ready = []
@@ -70,6 +72,21 @@ func unregister_player(id):
 	players.erase(id)
 	emit_signal("player_list_changed")
 
+func begin_game():
+	assert(get_tree().is_network_server())
+
+	# Create a dictionary with peer id and respective spawn points, could be improved by randomizing.
+	var spawn_points = {}
+	spawn_points[1] = 0 # Server in spawn point 0.
+	var spawn_point_idx = 1
+	for p in players:
+		spawn_points[p] = spawn_point_idx
+		spawn_point_idx += 1
+	# Call to pre-start game with the spawn points.
+	for p in players:
+		rpc_id(p, "pre_start_game", spawn_points)
+
+	pre_start_game(spawn_points)
 
 remote func pre_start_game(spawn_points):
 	# Change scene.
@@ -112,17 +129,13 @@ remote func pre_start_game(spawn_points):
 		for ghost in ghost_array:
 			if ghost is Ghost:
 				ghost.init_position()
+				ghost.create_goal()
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.
 		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
 	elif players.size() == 0:
 		post_start_game()
-
-
-remote func post_start_game():
-	get_tree().set_pause(false) # Unpause and unleash the game!
-
 
 remote func ready_to_start(id):
 	assert(get_tree().is_network_server())
@@ -135,6 +148,9 @@ remote func ready_to_start(id):
 			rpc_id(p, "post_start_game")
 		post_start_game()
 
+remote func post_start_game():
+	playing = true
+	get_tree().set_pause(false) # Unpause and unleash the game!
 
 func host_game(new_player_name):
 	player_name = new_player_name
@@ -157,30 +173,13 @@ func get_player_list():
 func get_player_name():
 	return player_name
 
-
-func begin_game():
-	assert(get_tree().is_network_server())
-
-	# Create a dictionary with peer id and respective spawn points, could be improved by randomizing.
-	var spawn_points = {}
-	spawn_points[1] = 0 # Server in spawn point 0.
-	var spawn_point_idx = 1
-	for p in players:
-		spawn_points[p] = spawn_point_idx
-		spawn_point_idx += 1
-	# Call to pre-start game with the spawn points.
-	for p in players:
-		rpc_id(p, "pre_start_game", spawn_points)
-
-	pre_start_game(spawn_points)
-
-
 func end_game():
 	if has_node("/root/DebugLevel"): # Game is in progress.
 		# End it
 		get_node("/root/DebugLevel").queue_free()
 
 	emit_signal("game_ended")
+	playing = false
 	players.clear()
 
 
