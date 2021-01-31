@@ -27,6 +27,8 @@ onready var cam_x : Spatial = $Cam_y/Cam_x
 
 var possessed : bool = false
 
+onready var sfx : AudioStreamPlayer3D = $AudioStreamPlayer3D
+
 var startingIdx : int
 var goalIdx : int = -1
 var goalObject : Possessable
@@ -114,6 +116,8 @@ func switch_target(target : Possessable) -> void:
 	fling.value = 0.0
 	
 	currentPossessed = target
+	
+	rpc("play_sound")
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -217,6 +221,9 @@ remotesync func ghost_win():
 	
 	parent.add_child(player)
 	parent.add_child(self)
+
+remotesync func play_sound():
+	sfx.play()
 
 remotesync func inform_win (message):
 	

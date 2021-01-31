@@ -16,6 +16,10 @@ onready var cam_x : Spatial = $Cam_y/Cam_x
 
 onready var mesh : MeshInstance = $MeshInstance
 
+onready var animplay : AnimationPlayer = $AnimationPlayer
+
+var ghost : Ghost
+
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if NetHelper.online and not is_network_master():
@@ -55,6 +59,17 @@ func _physics_process(delta: float) -> void:
 		var ghost : Ghost = ghostcast.get_collider().get_parent() # ew
 		if ghost:
 			ghost.caught += delta * 2
+	
+	if ghost:
+		var distance : float = global_transform.origin.distance_squared_to(ghost.global_transform.origin)
+		distance = clamp(distance, 0, 100)
+		distance /= 100
+		distance = 1 - distance
+		set_audio_speed(distance*0.7 + 1.0)
+	else:
+		var ghosts = get_tree().get_nodes_in_group("Ghost")
+		if ghosts.size() > 0:
+			ghost = get_tree().get_nodes_in_group("Ghost")[0]
 
 # movement of the fps object
 func movement(delta : float) -> void:
@@ -76,3 +91,6 @@ func camera_control(vector : Vector2) -> void:
 remote func set_transform_new(new : Transform, flash : Transform) -> void:
 	global_transform = new
 	$Cam_y/Cam_x/Camera/SpotLight.global_transform = flash
+
+remotesync func set_audio_speed(new : float):
+	animplay.playback_speed = new

@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scenes/FPSCharacter/FPSCharacter.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Environments/Host.tres" type="Environment" id=2]
+[ext_resource path="res://Assets/Audio/heartbeat.wav" type="AudioStream" id=3]
 
 [sub_resource type="CylinderShape" id=1]
 radius = 0.3
@@ -10,6 +11,28 @@ height = 0.5
 [sub_resource type="SphereMesh" id=2]
 radius = 0.25
 height = 0.5
+
+[sub_resource type="Animation" id=3]
+resource_name = "heartbeat"
+loop = true
+tracks/0/type = "audio"
+tracks/0/path = NodePath("AudioStreamPlayer3D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 3 )
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 3 )
+} ],
+"times": PoolRealArray( 0, 0.3 )
+}
 
 [node name="FPSCharacter" type="KinematicBody" groups=[
 "Player",
@@ -54,3 +77,10 @@ material/0 = null
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "heartbeat"
+anims/heartbeat = SubResource( 3 )
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 3 )
