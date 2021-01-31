@@ -192,7 +192,7 @@ func create_goal ():
 		while (goalIdx == startingIdx):
 			goalIdx = randi()%possessives.size()
 		goalObject = possessives[goalIdx]
-		goalObject.global_transform.origin.y += 1
+		#goalObject.global_transform.origin.y += 1
 		print("goal selected" + goalObject.name)
 		print("possessed: " + currentPossessed.name)
 

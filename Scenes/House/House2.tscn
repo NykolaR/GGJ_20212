@@ -35,26 +35,6 @@ extents = Vector3( 2, 1, 0.001 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6.51773, 1.25426, -6.29066 )
 script = ExtResource( 2 )
 
-[node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.66681, 3.06907 )
-light_energy = 3.8
-light_indirect_energy = 2.47
-
-[node name="OmniLight2" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.66681, -3.33229 )
-light_energy = 3.8
-light_indirect_energy = 2.47
-
-[node name="OmniLight3" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.46939, 2.80739, -2.48087 )
-light_energy = 3.8
-light_indirect_energy = 2.47
-
-[node name="OmniLight4" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.45034, 2.80739, 4.45847 )
-light_energy = 3.8
-light_indirect_energy = 2.47
-
 [node name="Spawns" type="Spatial" parent="."]
 
 [node name="Position3D" type="Position3D" parent="Spawns"]
