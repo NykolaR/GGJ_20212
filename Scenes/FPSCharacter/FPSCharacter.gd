@@ -14,7 +14,7 @@ onready var ghostcast : RayCast = $Cam_y/Cam_x/Camera/GhostCast
 onready var cam_y : Spatial = $Cam_y
 onready var cam_x : Spatial = $Cam_y/Cam_x
 
-onready var mesh : MeshInstance = $MeshInstance
+onready var mesh : MeshInstance = $Cam_y/MeshInstance
 
 onready var animplay : AnimationPlayer = $AnimationPlayer
 
@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		global_transform.origin.y = ray_col.y + height
 	
 	if get_tree().network_peer:
-		rpc_unreliable("set_transform_new", global_transform, $Cam_y/Cam_x/Camera/SpotLight.global_transform)
+		rpc_unreliable("set_transform_new", global_transform, cam_y.transform, cam_x.transform)
 	
 	if ghostcast.is_colliding():
 		var ghost : Ghost = ghostcast.get_collider().get_parent() # ew
@@ -88,9 +88,11 @@ func camera_control(vector : Vector2) -> void:
 	cam_y.rotate_y(-vector.x * 0.01 * Settings.mouse_sens)# * get_physics_process_delta_time())
 	cam_x.rotation.x = clamp(cam_x.rotation.x + (-vector.y * 0.01 * Settings.mouse_sens), -1.3, 1.3)
 
-remote func set_transform_new(new : Transform, flash : Transform) -> void:
+remote func set_transform_new(new : Transform, camy : Transform, camx : Transform) -> void:
 	global_transform = new
-	$Cam_y/Cam_x/Camera/SpotLight.global_transform = flash
+	cam_y.transform = camy
+	cam_x.transform = camx
+	#$Cam_y/Cam_x/Camera/SpotLight.global_transform = flash
 
 remotesync func set_audio_speed(new : float):
 	animplay.playback_speed = new
