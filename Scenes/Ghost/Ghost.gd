@@ -167,13 +167,14 @@ func timer_timeout() -> void:
 	mouse_speed = 0
 
 func create_goal ():
-	var possessives : Array = get_tree().get_nodes_in_group("Possessive")
-	goalIdx = randi()%possessives.size()
-	while (goalIdx == startingIdx):
+	if is_network_master():
+		var possessives : Array = get_tree().get_nodes_in_group("Possessive")
 		goalIdx = randi()%possessives.size()
-	goalObject = possessives[goalIdx]
-	print("goal selected" + goalObject.name)
-	print("possessed: " + currentPossessed.name)
+		while (goalIdx == startingIdx):
+			goalIdx = randi()%possessives.size()
+		goalObject = possessives[goalIdx]
+		print("goal selected" + goalObject.name)
+		print("possessed: " + currentPossessed.name)
 
 func check_win():
 	if currentPossessed == goalObject:
