@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scenes/Management/MainMenu.gd" type="Script" id=1]
+
+[node name="MainMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Main" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Main"]
+margin_right = 1024.0
+margin_bottom = 298.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="Main/CenterContainer"]
+margin_left = 488.0
+margin_top = 139.0
+margin_right = 535.0
+margin_bottom = 159.0
+text = "HOST"
+
+[node name="CenterContainer2" type="CenterContainer" parent="Main"]
+margin_top = 302.0
+margin_right = 1024.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="Main/CenterContainer2"]
+margin_left = 491.0
+margin_top = 139.0
+margin_right = 532.0
+margin_bottom = 159.0
+text = "JOIN"
+
+[connection signal="pressed" from="Main/CenterContainer/Button" to="." method="_host_pressed"]
+[connection signal="pressed" from="Main/CenterContainer2/Button" to="." method="_join_pressed"]

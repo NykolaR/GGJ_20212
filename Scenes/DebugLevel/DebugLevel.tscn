@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scenes/DebugLevel/DebugLevel.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Scenes/Possessable/Possessables/TestPossessable.tscn" type="PackedScene" id=3]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 10, 1, 10 )
+
+[sub_resource type="CubeMesh" id=2]
+size = Vector3( 10, 2, 10 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_texture = ExtResource( 2 )
+uv1_triplanar = true
+
+[node name="DebugLevel" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="StaticBody" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody"]
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="StaticBody2" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.88956, 0.456819, 0, -0.456819, 0.88956, 0, 0, 5.04391 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody2"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody2"]
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="StaticBody3" type="StaticBody" parent="."]
+transform = Transform( 0.071154, 0.997235, -0.0486742, -0.997406, 0.0713684, 0.0213306, 0.0109059, 0.0207272, 2.26838, 4.315, 0, 2.418 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody3"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody3"]
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="TestPossessable" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.78244, 2.0328, 0 )
+input_ray_pickable = true
+
+[node name="TestPossessable2" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.69627, 2.0328, 0 )
+input_ray_pickable = true

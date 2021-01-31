@@ -1,0 +1,85 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Spatial",
+"class": "Ghost",
+"language": "GDScript",
+"path": "res://Scenes/Ghost/Ghost.gd"
+}, {
+"base": "StaticBody",
+"class": "Possessable",
+"language": "GDScript",
+"path": "res://Scenes/Possessable/Possessable.gd"
+} ]
+_global_script_class_icons={
+"Ghost": "",
+"Possessable": ""
+}
+
+[application]
+
+config/name="GGJ_2021"
+run/main_scene="res://Scenes/Management/Boot.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Time="*res://Autoload/Time.gd"
+NetHelper="*res://Autoload/NetHelper.gd"
+Settings="*res://Autoload/Settings.gd"
+gamestate="*res://Scenes/Network/gamestate.gd"
+
+[display]
+
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
+
+[input]
+
+up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":44,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+}
+down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":79,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+}
+right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":69,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+}
+possess={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+
+[layer_names]
+
+3d_physics/layer_1="environment"
+3d_physics/layer_2="possessable"
+3d_physics/layer_3="possessable_click"
+3d_physics/layer_4="ghost"
+
+[rendering]
+
+quality/driver/driver_name="GLES2"

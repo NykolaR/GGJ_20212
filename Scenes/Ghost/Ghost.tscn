@@ -1,0 +1,131 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Scenes/Ghost/Ghost.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Visual/circle_bg.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Visual/circle_fg.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Visual/ghost_reticle.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/Ghost/smoke.tres" type="SpriteFrames" id=5]
+
+[sub_resource type="SphereShape" id=1]
+radius = 1.5
+
+[sub_resource type="SpatialMaterial" id=2]
+resource_local_to_scene = true
+flags_transparent = true
+vertex_color_use_as_albedo = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id=3]
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0.313596 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.892544 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0, 0.0684524, 0.613095, 1 )
+colors = PoolColorArray( 1, 1, 1, 0.0670927, 1, 1, 1, 1, 1, 1, 1, 0.757188, 1, 1, 1, 0 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+gravity = Vector3( 0, 9.8, 0 )
+
+[sub_resource type="CubeMesh" id=7]
+
+[node name="Ghost" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Cam_y" type="Spatial" parent="."]
+
+[node name="Cam_x" type="Spatial" parent="Cam_y"]
+
+[node name="Camera" type="Camera" parent="Cam_y/Cam_x"]
+
+[node name="RayCast" type="RayCast" parent="Cam_y/Cam_x/Camera"]
+enabled = true
+exclude_parent = false
+cast_to = Vector3( 0, 0, -50 )
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="Area" type="Area" parent="."]
+monitoring = false
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+shape = SubResource( 1 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Particles" type="CPUParticles" parent="."]
+material_override = SubResource( 2 )
+cast_shadow = 0
+emitting = false
+local_coords = false
+mesh = SubResource( 3 )
+emission_shape = 1
+emission_sphere_radius = 0.1
+gravity = Vector3( 0, 0.3, 0 )
+scale_amount_curve = SubResource( 4 )
+color_ramp = SubResource( 5 )
+
+[node name="Particles2" type="Particles" parent="."]
+visible = false
+material_override = SubResource( 2 )
+cast_shadow = 0
+local_coords = false
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 7 )
+
+[node name="Fling" type="TextureProgress" parent="."]
+visible = false
+margin_left = 32.0
+margin_top = 32.0
+margin_right = 160.0
+margin_bottom = 160.0
+rect_scale = Vector2( 0.5, 0.5 )
+max_value = 1.0
+step = 0.01
+texture_under = ExtResource( 2 )
+texture_progress = ExtResource( 3 )
+fill_mode = 4
+tint_under = Color( 0.239216, 0.239216, 0.239216, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Reticle" type="TextureRect" parent="CenterContainer"]
+visible = false
+modulate = Color( 1, 1, 1, 0.501961 )
+margin_left = 480.0
+margin_top = 268.0
+margin_right = 544.0
+margin_bottom = 332.0
+rect_pivot_offset = Vector2( 32, 32 )
+texture = ExtResource( 4 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="."]
+size = Vector2( 128, 128 )
+transparent_bg = true
+handle_input_locally = false
+usage = 1
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Viewport"]
+modulate = Color( 5, 5, 5, 1 )
+frames = ExtResource( 5 )
+centered = false
+
+[connection signal="tween_completed" from="Tween" to="." method="_tween_completed"]
