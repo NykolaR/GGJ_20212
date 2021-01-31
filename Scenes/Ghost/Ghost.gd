@@ -25,6 +25,13 @@ onready var cam_x : Spatial = $Cam_y/Cam_x
 
 var possessed : bool = false
 
+var startingIdx : int
+var goalIdx : int = -1
+var goalObject : Possessable
+var currentPossessed : Possessable
+
+var playerHasWon = false
+
 const charge_time : float = 1.8
 const transfer_time : float = 3.0
 const min_transfer_time : float = 1.0
@@ -91,6 +98,8 @@ func switch_target(target : Possessable) -> void:
 	tween.interpolate_property(self, "translation", translation, (target.translation + target.center.translation), transfer_time - (pow(fling.value, 2)*(transfer_time-min_transfer_time)), Tween.TRANS_BACK, Tween.EASE_OUT)
 	tween.start()
 	fling.value = 0.0
+	
+	currentPossessed = target
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -115,6 +124,8 @@ func camera_control(vector : Vector2) -> void:
 func _tween_all_completed() -> void:
 	if possessed:
 		rpc("set_emitting",false)
+		print("possessed: " + currentPossessed.name)
+		check_win()
 
 func _tween_completed(object : Object, key : NodePath) -> void:
 	if str(key) == ":translation":
@@ -124,7 +135,9 @@ func _tween_completed(object : Object, key : NodePath) -> void:
 func set_caught(new : float) -> void:
 	caught = new
 	if caught >= 3.0:
-		pass
+		if not playerHasWon:
+			playerHasWon = true
+			rpc("inform_win", "Player has won")
 
 remote func set_emitting(new: bool) -> void:
 	particles.emitting = new
@@ -138,10 +151,12 @@ remotesync func set_wiggle(intensity : float) -> void:
 	wiggle.set_shader_param("possess_position", global_transform.origin)
 
 func init_position():
+	
 	if is_network_master():
 		var possessives : Array = get_tree().get_nodes_in_group("Possessive")
-		var index : int = randi()%possessives.size()
-		var target : Possessable = possessives[index]
+		startingIdx = randi()%possessives.size()
+		var target : Possessable = possessives[startingIdx]
+		currentPossessed = target
 		
 		if target:
 			translation = target.translation + target.center.translation
@@ -150,3 +165,20 @@ func init_position():
 
 func timer_timeout() -> void:
 	mouse_speed = 0
+
+func create_goal ():
+	var possessives : Array = get_tree().get_nodes_in_group("Possessive")
+	goalIdx = randi()%possessives.size()
+	while (goalIdx == startingIdx):
+		goalIdx = randi()%possessives.size()
+	goalObject = possessives[goalIdx]
+	print("goal selected" + goalObject.name)
+	print("possessed: " + currentPossessed.name)
+
+func check_win():
+	if currentPossessed == goalObject:
+		rpc("inform_win", "Ghost has won")
+
+remotesync func inform_win (message):
+	print(message)
+	

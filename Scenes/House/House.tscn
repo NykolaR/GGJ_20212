@@ -260,14 +260,8 @@ light_indirect_energy = 2.47
 [node name="Position3D" type="Position3D" parent="Spawns"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98986, 1.00867, 0.751233 )
 
-[node name="Position3D55" type="Position3D" parent="Spawns"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.19047, 1.00867, 7.12412 )
-
 [node name="Position3D57" type="Position3D" parent="Spawns"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.909, 1, 6.123 )
-
-[node name="Position3D56" type="Position3D" parent="Spawns"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.19047, 1.00867, 5.54604 )
 
 [node name="Position3D6" type="Position3D" parent="Spawns"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.3708, 1, -1.36169 )
@@ -412,9 +406,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.82307, 1.00867, -1.12917 )
 
 [node name="Position3D15" type="Position3D" parent="Spawns"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.82307, 1.00867, -2.4187 )
-
-[node name="Position3D16" type="Position3D" parent="Spawns"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.89416, 1, -1.76043 )
 
 [node name="Position3D17" type="Position3D" parent="Spawns"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.89416, 1.00867, -1.76043 )

@@ -129,6 +129,7 @@ remote func pre_start_game(spawn_points):
 		for ghost in ghost_array:
 			if ghost is Ghost:
 				ghost.init_position()
+				ghost.create_goal()
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.
