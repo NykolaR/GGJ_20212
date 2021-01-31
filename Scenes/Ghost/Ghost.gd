@@ -2,6 +2,10 @@ extends Spatial
 class_name Ghost
 
 var caught : float = 0.0 setget set_caught
+var wiggle_index : int = 0
+var mouse_speed : float = 0
+
+const wiggle : ShaderMaterial = preload("res://Assets/Visual/Shaders/PossessableMaterial.tres")
 
 onready var raycast : RayCast = $Cam_y/Cam_x/Camera/RayCast
 onready var tween : Tween = $Tween
@@ -18,7 +22,7 @@ onready var fling : TextureProgress = $Fling
 onready var cam_y : Spatial = $Cam_y
 onready var cam_x : Spatial = $Cam_y/Cam_x
 
-var possessed : Possessable = null
+var possessed : bool = false
 
 const charge_time : float = 1.8
 const transfer_time : float = 3.0
@@ -27,7 +31,6 @@ const min_transfer_time : float = 1.0
 signal possess_released
 
 func _ready() -> void:
-	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if NetHelper.online and not is_network_master():
 		# current scene tree is not controlling the ghost
@@ -65,23 +68,23 @@ func _physics_process(delta: float) -> void:
 		else:
 			reticle.modulate.a = 0.5
 			reticle.rect_scale = MISS_SCALE
+		
+		rpc_unreliable("set_wiggle", clamp(mouse_speed / 1000.0, 0.05, 1.0))
 	else:
 		rpc_unreliable("set_transform", global_transform)
+		if fling.value > 0:
+			rpc_unreliable("set_wiggle", fling.value + 0.5)
+		else:
+			rpc_unreliable("set_wiggle", 0.75)
 
 func switch_target(target : Possessable) -> void:
 	tween.stop_all()
 	reticle.modulate.a = 0.1
 	reticle.rect_scale = FLING_SCALE
-	if possessed:
-		possessed.possess(false)
 	
-	possessed = target
-	#particles.emitting = true
-	#if get_tree().network_peer:
+	possessed = true
 	rpc("set_emitting",true)
-	#rset_id(1, "emitting", true)
 	
-	#tween.interpolate_property(self, "translation", translation, target.translation, transfer_time - (fling.value*2), Tween.TRANS_QUART, Tween.EASE_IN_OUT)
 	tween.interpolate_property(self, "translation", translation, (target.translation + target.center.translation), transfer_time - (pow(fling.value, 2)*(transfer_time-min_transfer_time)), Tween.TRANS_BACK, Tween.EASE_OUT)
 	tween.start()
 	fling.value = 0.0
@@ -98,9 +101,7 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		camera_control(event.relative)
-		if possessed and not tween.is_active():
-			possessed.magnitude = clamp(event.relative.length_squared() / 1000, 0, 0.2)
-
+		mouse_speed = event.relative.length_squared()
 
 # camera movement of the fps object
 func camera_control(vector : Vector2) -> void:
@@ -109,9 +110,6 @@ func camera_control(vector : Vector2) -> void:
 
 func _tween_all_completed() -> void:
 	if possessed:
-		#particles.emitting = false
-		#if get_tree().network_peer:
-		#rset_id(1, "emitting", false)
 		rpc("set_emitting",false)
 
 func _tween_completed(object : Object, key : NodePath) -> void:
@@ -126,10 +124,14 @@ func set_caught(new : float) -> void:
 
 remote func set_emitting(new: bool) -> void:
 	particles.emitting = new
-	print("My partciles are: " + String(new))
 
 remote func set_transform(new : Transform) -> void:
 	global_transform = new
+
+remotesync func set_wiggle(intensity : float) -> void:
+	wiggle.set_shader_param("intensity", intensity)
+	wiggle.set_shader_param("time_scale", intensity)
+	wiggle.set_shader_param("PosessPosition", global_transform.origin)
 
 func init_position():
 	if is_network_master():
@@ -140,3 +142,4 @@ func init_position():
 		if target:
 			translation = target.translation + target.center.translation
 		rpc("set_transform", global_transform)
+		set_wiggle(0.1)
