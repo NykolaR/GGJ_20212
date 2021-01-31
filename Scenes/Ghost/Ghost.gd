@@ -40,7 +40,11 @@ const min_transfer_time : float = 1.0
 
 signal possess_released
 
+var player : KinematicBody
+
 func _ready() -> void:
+	if not player:
+		player = get_tree().get_nodes_in_group("Player")[0]
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if NetHelper.online and not is_network_master():
 		# current scene tree is not controlling the ghost
@@ -137,9 +141,11 @@ func _tween_completed(object : Object, key : NodePath) -> void:
 func set_caught(new : float) -> void:
 	caught = new
 	if caught >= 3.0:
-		if not playerHasWon:
-			playerHasWon = true
-			rpc("inform_win", "Player has won")
+		rpc("ghost_found")
+		caught = 0
+		#if not playerHasWon:
+			#playerHasWon = true
+			#rpc("inform_win", "Player has won")
 
 remote func set_emitting(new: bool) -> void:
 	particles.emitting = new
@@ -153,7 +159,6 @@ remotesync func set_wiggle(intensity : float) -> void:
 	wiggle.set_shader_param("possess_position", global_transform.origin)
 
 func init_position():
-	
 	if is_network_master():
 		var possessives : Array = get_tree().get_nodes_in_group("Possessive")
 		startingIdx = randi()%possessives.size()
@@ -175,14 +180,36 @@ func create_goal ():
 		while (goalIdx == startingIdx):
 			goalIdx = randi()%possessives.size()
 		goalObject = possessives[goalIdx]
+		goalObject.global_transform.origin.y += 1
 		print("goal selected" + goalObject.name)
 		print("possessed: " + currentPossessed.name)
 
 func check_win():
 	if currentPossessed == goalObject:
-		rpc("inform_win", "Ghost has won")
+		rpc("ghost_win")
+		#rpc("inform_win", "Ghost has won")
+
+remotesync func ghost_found():
+	init_position()
+
+remotesync func ghost_win():
+	var parent = get_parent()
+	parent.remove_child(player)
+	parent.remove_child(self)
+	
+	var old_name : String = name
+	name = player.name
+	set_network_master(int(name))
+	
+	player.name = old_name
+	player.set_network_master(int(old_name))
+	
+	parent.add_child(player)
+	parent.add_child(self)
 
 remotesync func inform_win (message):
+	
+	return
 	if game_ended:
 		return
 	

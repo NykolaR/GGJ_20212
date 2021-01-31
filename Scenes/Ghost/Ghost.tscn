@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Scenes/Ghost/Ghost.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/circle_bg.png" type="Texture" id=2]
@@ -31,6 +31,11 @@ colors = PoolColorArray( 1, 1, 1, 0.0670927, 1, 1, 1, 1, 1, 1, 1, 0.757188, 1, 1
 gravity = Vector3( 0, 9.8, 0 )
 
 [sub_resource type="CubeMesh" id=7]
+
+[sub_resource type="DynamicFontData" id=8]
+
+[sub_resource type="DynamicFont" id=9]
+font_data = SubResource( 8 )
 
 [node name="Ghost" type="Spatial"]
 script = ExtResource( 1 )
@@ -130,6 +135,21 @@ centered = false
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
+
+[node name="CenterContainer2" type="CenterContainer" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CenterContainer2"]
+margin_left = 512.0
+margin_top = 299.0
+margin_right = 512.0
+margin_bottom = 301.0
+custom_fonts/font = SubResource( 9 )
 
 [connection signal="tween_completed" from="Tween" to="." method="_tween_completed"]
 [connection signal="timeout" from="Timer" to="." method="timer_timeout"]

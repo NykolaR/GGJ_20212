@@ -11,7 +11,9 @@ height = 0.5
 radius = 0.25
 height = 0.5
 
-[node name="FPSCharacter" type="KinematicBody"]
+[node name="FPSCharacter" type="KinematicBody" groups=[
+"Player",
+]]
 input_ray_pickable = false
 collision_layer = 0
 script = ExtResource( 1 )
