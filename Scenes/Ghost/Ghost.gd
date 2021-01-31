@@ -47,14 +47,22 @@ func _ready() -> void:
 		player = get_tree().get_nodes_in_group("Player")[0]
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if NetHelper.online and not is_network_master():
+		$Cam_y/Cam_x/Camera.current = false
 		# current scene tree is not controlling the ghost
 		# stops processing physics func & input processing; only the person playing this ghost can control them
 		set_physics_process(false)
 		set_process_input(false)
+		fling.visible = false
+		reticle.visible = false
+		$Viewport/AnimatedSprite.playing = true
+		$Viewport.render_target_update_mode = Viewport.UPDATE_WHEN_VISIBLE
+		particles.visible = true
 		var mat : SpatialMaterial = particles.material_override
 		if mat:
 			mat.albedo_texture = $Viewport.get_texture()
 	else:
+		set_physics_process(true)
+		set_process_input(true)
 		# current scene tree is controlling this ghost
 		fling.visible = true
 		reticle.visible = true
@@ -203,6 +211,9 @@ remotesync func ghost_win():
 	
 	player.name = old_name
 	player.set_network_master(int(old_name))
+	
+	request_ready()
+	player.request_ready()
 	
 	parent.add_child(player)
 	parent.add_child(self)

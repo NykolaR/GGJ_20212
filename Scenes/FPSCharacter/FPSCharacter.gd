@@ -4,6 +4,7 @@ var height : float = 1.8
 var walk_speed : float = 3.0
 
 const ghost_env : Environment = preload("res://Assets/Environments/Ghost.tres")
+const player_env : Environment = preload("res://Assets/Environments/Host.tres")
 
 onready var environment : WorldEnvironment = $WorldEnvironment
 
@@ -22,9 +23,13 @@ func _ready() -> void:
 		set_process_input(false)
 		set_physics_process(false)
 		$WorldEnvironment.environment = ghost_env
+		mesh.visible = true
 	else:
+		set_process_input(true)
+		set_physics_process(true)
 		# current scene tree is in control
 		mesh.visible = false
+		$WorldEnvironment.environment = player_env
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
