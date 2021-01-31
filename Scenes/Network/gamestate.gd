@@ -92,9 +92,9 @@ remote func pre_start_game(spawn_points):
 	# Change scene.
 	var world = load("res://Scenes/House/House.tscn").instance()
 	get_tree().get_root().add_child(world)
-
+	
 	get_tree().get_root().get_node("Lobby").hide()
-
+	
 	var player_scene = load("res://Scenes/FPSCharacter/FPSCharacter.tscn")
 	var ghost_scene = load("res://Scenes/Ghost/Ghost.tscn")
 	
@@ -174,16 +174,21 @@ func get_player_name():
 	return player_name
 
 func end_game():
-	if has_node("/root/DebugLevel"): # Game is in progress.
+	get_tree().paused = true
+	yield(get_tree().create_timer(1.0), "timeout")
+	if has_node("/root/Spatial"): # Game is in progress.
 		# End it
-		get_node("/root/DebugLevel").queue_free()
-
+		get_node("/root/Spatial").queue_free()
+	
 	emit_signal("game_ended")
 	playing = false
 	players.clear()
+	get_tree().paused = false
 
 
 func _ready():
+	pause_mode = Node.PAUSE_MODE_PROCESS
+	add_to_group("GameManager")
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self,"_player_disconnected")
 	get_tree().connect("connected_to_server", self, "_connected_ok")

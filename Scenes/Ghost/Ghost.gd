@@ -1,6 +1,8 @@
 extends Spatial
 class_name Ghost
 
+var game_ended : bool = false
+
 var caught : float = 0.0 setget set_caught
 var wiggle_index : int = 0
 var mouse_speed : float = 0
@@ -181,5 +183,10 @@ func check_win():
 		rpc("inform_win", "Ghost has won")
 
 remotesync func inform_win (message):
-	print(message)
+	if game_ended:
+		return
 	
+	game_ended = true
+	var game = get_tree().get_nodes_in_group("GameManager")[0]
+	game.end_game()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
