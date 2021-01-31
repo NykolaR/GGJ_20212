@@ -47,7 +47,6 @@ exclude_parent = false
 cast_to = Vector3( 0, 0, -50 )
 collision_mask = 4
 collide_with_areas = true
-collide_with_bodies = false
 
 [node name="Area" type="Area" parent="."]
 monitoring = false
@@ -128,4 +127,9 @@ modulate = Color( 5, 5, 5, 1 )
 frames = ExtResource( 5 )
 centered = false
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="tween_completed" from="Tween" to="." method="_tween_completed"]
+[connection signal="timeout" from="Timer" to="." method="timer_timeout"]

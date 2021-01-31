@@ -9,6 +9,7 @@ const wiggle : ShaderMaterial = preload("res://Assets/Visual/Shaders/Possessable
 
 onready var raycast : RayCast = $Cam_y/Cam_x/Camera/RayCast
 onready var tween : Tween = $Tween
+onready var timer : Timer = $Timer
 
 onready var reticle : TextureRect = $CenterContainer/Reticle
 const HIT_SCALE : Vector2 = Vector2(0.25, 0.25)
@@ -54,28 +55,30 @@ func _physics_process(delta: float) -> void:
 	caught = max(caught, 0)
 	if not tween.is_active():
 		if raycast.is_colliding():
-			reticle.modulate.a = 1
-			reticle.rect_scale = HIT_SCALE
-			# only collides with possessables
 			var col : Possessable = raycast.get_collider().get_parent() as Possessable # gross but is fine
 			
 			if col:
+				reticle.modulate.a = 1
+				reticle.rect_scale = HIT_SCALE
 				if Input.is_action_just_pressed("possess"):
 					# start fling bar movement
 					tween.interpolate_property(fling, "value", 0.000000000001, 1, charge_time, Tween.TRANS_CUBIC, Tween.EASE_IN)
 					tween.start()
 					connect("possess_released", self, "switch_target", [col], CONNECT_ONESHOT)
+			else:
+				reticle.modulate.a = 0.5
+				reticle.rect_scale = MISS_SCALE
 		else:
 			reticle.modulate.a = 0.5
 			reticle.rect_scale = MISS_SCALE
 		
-		rpc_unreliable("set_wiggle", clamp(mouse_speed / 1000.0, 0.05, 1.0))
+		rpc_unreliable("set_wiggle", clamp(mouse_speed / 50.0, 0.15, 1.0))
 	else:
 		rpc_unreliable("set_transform", global_transform)
 		if fling.value > 0:
-			rpc_unreliable("set_wiggle", fling.value + 0.5)
+			rpc_unreliable("set_wiggle", (fling.value/2.0) + 0.3)
 		else:
-			rpc_unreliable("set_wiggle", 0.75)
+			rpc_unreliable("set_wiggle", 0.5)
 
 func switch_target(target : Possessable) -> void:
 	tween.stop_all()
@@ -102,6 +105,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		camera_control(event.relative)
 		mouse_speed = event.relative.length_squared()
+		timer.start()
 
 # camera movement of the fps object
 func camera_control(vector : Vector2) -> void:
@@ -131,7 +135,7 @@ remote func set_transform(new : Transform) -> void:
 remotesync func set_wiggle(intensity : float) -> void:
 	wiggle.set_shader_param("intensity", intensity)
 	wiggle.set_shader_param("time_scale", intensity)
-	wiggle.set_shader_param("PosessPosition", global_transform.origin)
+	wiggle.set_shader_param("possess_position", global_transform.origin)
 
 func init_position():
 	if is_network_master():
@@ -143,3 +147,6 @@ func init_position():
 			translation = target.translation + target.center.translation
 		rpc("set_transform", global_transform)
 		set_wiggle(0.1)
+
+func timer_timeout() -> void:
+	mouse_speed = 0
