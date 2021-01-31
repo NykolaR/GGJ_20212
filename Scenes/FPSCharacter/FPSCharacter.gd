@@ -1,6 +1,6 @@
 extends KinematicBody
 
-var height : float = 1.8
+var height : float = 1.3
 var walk_speed : float = 3.0
 
 const ghost_env : Environment = preload("res://Assets/Environments/Ghost.tres")
