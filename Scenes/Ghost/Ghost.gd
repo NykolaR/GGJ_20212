@@ -48,6 +48,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	caught -= delta
+	caught = max(caught, 0)
 	if not tween.is_active():
 		if raycast.is_colliding():
 			reticle.modulate.a = 1
@@ -66,7 +67,6 @@ func _physics_process(delta: float) -> void:
 			reticle.rect_scale = MISS_SCALE
 	else:
 		rpc_unreliable("set_transform", global_transform)
-		
 
 func switch_target(target : Possessable) -> void:
 	tween.stop_all()
@@ -74,7 +74,7 @@ func switch_target(target : Possessable) -> void:
 	reticle.rect_scale = FLING_SCALE
 	if possessed:
 		possessed.possess(false)
-		
+	
 	possessed = target
 	#particles.emitting = true
 	#if get_tree().network_peer:
